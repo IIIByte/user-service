@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/common.proto";
+
+option go_package = "github.com/IIIByte/user-service/model/user";
+
+// User - модель пользователя
+message User {
+  // ID (UUID) пользователя
+  // NOTE: Генерируется в бизнес логике, не передавать
+  optional string id = 1;
+  // Логин пользователя (не видим другим пользователям)
+  string login = 2;
+  // Имя пользователя (видимо другим пользователям)
+  string name = 3;
+
+  // Хеш пароля, надежный
+  string password_hash = 4;
+
+  // Системно временные поля
+  optional google.protobuf.Timestamp created_at = 5;
+  optional google.protobuf.Timestamp updated_at = 6;
+}
+
+// GetByIDRequest - получение пользователя по ID
+message GetByIDRequest {
+  string id = 1;
+}
+
+message GetByIDResponse {
+  User user = 1;
+
+  // Статус операции
+  OperationRequestStatus operation_status = 4;
+}
+
+// GetByLoginRequest - получение пользователя по логину (уникальное значение, такое же как ID)
+message GetByLoginRequest {
+  string login = 1;
+}
+
+message GetByLoginResponse {
+  User user = 1;
+
+  // Статус операции
+  OperationRequestStatus operation_status = 4;
+}
+
+
+// GetListRequest - получение списка пользователей (по фильтрам и с пагинацией)
+message GetListRequest {
+  UserCondition user_condition = 1;
+  user.common.ListCondition list_condition = 2;
+}
+
+// UserCondition - фильтры
+message UserCondition {
+  repeated string ids = 1;
+  repeated string logins = 2;
+  string created_at = 3;
+  string updated_at = 4;
+}
+
+message GetListResponse {
+  // Сигнатура запроса на который отвечаем
+  GetListRequest req = 1;
+
+  // Получаем объект, в нашем случае массив пользователей
+  repeated User users = 2;
+  // Общее кол-во элементов с учетом переданным параметров запроса
+  int32 total = 3;
+
+  // Статус операции
+  OperationRequestStatus operation_status = 4;
+}
+
+// CreateRequest - создание пользователя
+message CreateRequest {
+  string login = 2;
+  string name = 3;
+  string password_hash = 4;
+}
+
+message CreateResponse {
+  // Сигнатура запроса на который отвечаем
+  CreateRequest req = 1;
+
+  User created_user = 2;
+
+  // Статус операции
+  OperationRequestStatus operation_status = 3;
+}
+
+// UpdateRequest - обновление полей у пользователя
+message UpdateRequest {
+  User user = 1;
+}
+
+message UpdateResponse {
+  // Сигнатура запроса на который отвечаем
+  CreateRequest req = 1;
+
+  User created_user = 2;
+
+  // Статус операции
+  OperationRequestStatus operation_status = 3;
+}
+
+// MarkAsDeletedRequest - пометить в очередь на удаление из БД
+message MarkAsDeletedRequest {
+  string user_id = 1;
+}
+
+message MarkAsDeletedResponse {
+  string user_id = 1;
+
+  // Статус операции
+  OperationRequestStatus operation_status = 3;
+}
+
+// MarkAsBannedRequest - пометить как заблокированного
+message MarkAsBannedRequest {
+  string user_id = 1;
+}
+
+message MarkAsBannedResponse {
+  string user_id = 1;
+
+  // Статус операции
+  OperationRequestStatus operation_status = 3;
+}
+
+// OperationRequestStatus - статусы операций
+enum OperationRequestStatus {
+  // Операция в процессе
+  InProgress = 0;
+  // Операция не прошла, по причине возникновение ошибки
+  Failed = 1;
+  // Операция выполнена успешно
+  Success = 2;
+}

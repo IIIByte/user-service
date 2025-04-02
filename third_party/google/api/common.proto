@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package user.common;
+
+option go_package = "github.com/IIIByte/user-service/backend/user/third_party/google/api";
+
+
+// Типы сортировки
+enum TypeDirection {
+  // от меньшего к большему
+  TYPE_ASC = 0;
+  // от большего к меньшему
+  TYPE_DESC = 1;
+}
+
+// Состояние списка
+message ListCondition {
+  // Взять элементов
+  uint32 take = 1;
+  // Пропустить элементов
+  uint32 skip = 2;
+  // Сортировать элементы по ключу
+  string direction_key = 3;
+  // Направление сортировки (ASC OR DESC)
+  TypeDirection direction = 4;
+
+  // Limit && Offset
+  int32 limit = 5;
+  int32 offset = 6;
+}
+
+// Состояние Временного интервала (даты включительно)
+// EXAMPLE: 20.01.2025 - 20.02.2025 (включительно)
+message TimeRangeCondition {
+  // Начиная с даты
+  google.protobuf.Timestamp from = 1;
+  // Заканчивая датой
+  google.protobuf.Timestamp to = 2;
+}
+
+// Состояние интервала между значениями
+message RangeCondition {
+  // Начиная с значения
+  string from = 1;
+  // Заканчивая значением (включительно)
+  string to = 2;
+}

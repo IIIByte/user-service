@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/api.proto";
+//import "third_party/google/api/annotations.proto";
+//import "third_party/google/api/common.proto";
+import "model/user/user.proto";
+
+package user.model;
+
+option go_package = "github.com/IIIByte/user-service/user/public/user";
+
+// Сервис для работы с пользователями
+service UserService {
+
+
+  // GetList - Получить список пользователей
+  rpc GetList(GetListRequest) returns (GetListResponse) {
+//    option (google.api.http) = {
+//      post: "/v1/robocassa/payment/create",
+//      body: "*"
+//    };
+  };
+  // Create - Создать нового пользователя
+  rpc Create(CreateRequest) returns (CreateResponse);
+  // Update - Обновить существующего пользователя
+  rpc Update(UpdateRequest) returns (UpdateResponse);
+
+  // MarkAsBanned - Пометить как забаненного
+  // rpc MarkAsBanned(MarkAsBanned) returns (MarkAsBanned);
+
+  // MarkAsLocked - Пометить как заблокированного
+  // rpc MarkAsLocked(MarkAsLockedRequest) returns (MarkAsLockedResponse);
+
+
+  // TODO: MarkAsDeleted - Пометить в очередь на удаление
+}
