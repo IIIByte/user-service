@@ -8,7 +8,7 @@ package user
 
 import (
 	context "context"
-	user "github.com/IIIByte/user-service/model/user"
+	user "github.com/IIIByte/user-service/proto/model/user"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,9 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetList_FullMethodName = "/user.model.UserService/GetList"
-	UserService_Create_FullMethodName  = "/user.model.UserService/Create"
-	UserService_Update_FullMethodName  = "/user.model.UserService/Update"
+	UserService_GetList_FullMethodName       = "/user.service.UserService/GetList"
+	UserService_Create_FullMethodName        = "/user.service.UserService/Create"
+	UserService_Update_FullMethodName        = "/user.service.UserService/Update"
+	UserService_MarkAsBanned_FullMethodName  = "/user.service.UserService/MarkAsBanned"
+	UserService_MarkAsDeleted_FullMethodName = "/user.service.UserService/MarkAsDeleted"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -37,6 +39,10 @@ type UserServiceClient interface {
 	Create(ctx context.Context, in *user.CreateRequest, opts ...grpc.CallOption) (*user.CreateResponse, error)
 	// Update - Обновить существующего пользователя
 	Update(ctx context.Context, in *user.UpdateRequest, opts ...grpc.CallOption) (*user.UpdateResponse, error)
+	// MarkAsBanned - Пометить как забаненного
+	MarkAsBanned(ctx context.Context, in *user.MarkAsBannedRequest, opts ...grpc.CallOption) (*user.MarkAsBannedResponse, error)
+	// MarkAsLocked - Пометить в очередь на удаление
+	MarkAsDeleted(ctx context.Context, in *user.MarkAsDeletedRequest, opts ...grpc.CallOption) (*user.MarkAsDeletedResponse, error)
 }
 
 type userServiceClient struct {
@@ -77,6 +83,26 @@ func (c *userServiceClient) Update(ctx context.Context, in *user.UpdateRequest, 
 	return out, nil
 }
 
+func (c *userServiceClient) MarkAsBanned(ctx context.Context, in *user.MarkAsBannedRequest, opts ...grpc.CallOption) (*user.MarkAsBannedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(user.MarkAsBannedResponse)
+	err := c.cc.Invoke(ctx, UserService_MarkAsBanned_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) MarkAsDeleted(ctx context.Context, in *user.MarkAsDeletedRequest, opts ...grpc.CallOption) (*user.MarkAsDeletedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(user.MarkAsDeletedResponse)
+	err := c.cc.Invoke(ctx, UserService_MarkAsDeleted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -89,6 +115,10 @@ type UserServiceServer interface {
 	Create(context.Context, *user.CreateRequest) (*user.CreateResponse, error)
 	// Update - Обновить существующего пользователя
 	Update(context.Context, *user.UpdateRequest) (*user.UpdateResponse, error)
+	// MarkAsBanned - Пометить как забаненного
+	MarkAsBanned(context.Context, *user.MarkAsBannedRequest) (*user.MarkAsBannedResponse, error)
+	// MarkAsLocked - Пометить в очередь на удаление
+	MarkAsDeleted(context.Context, *user.MarkAsDeletedRequest) (*user.MarkAsDeletedResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -107,6 +137,12 @@ func (UnimplementedUserServiceServer) Create(context.Context, *user.CreateReques
 }
 func (UnimplementedUserServiceServer) Update(context.Context, *user.UpdateRequest) (*user.UpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedUserServiceServer) MarkAsBanned(context.Context, *user.MarkAsBannedRequest) (*user.MarkAsBannedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkAsBanned not implemented")
+}
+func (UnimplementedUserServiceServer) MarkAsDeleted(context.Context, *user.MarkAsDeletedRequest) (*user.MarkAsDeletedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkAsDeleted not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -183,11 +219,47 @@ func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_MarkAsBanned_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(user.MarkAsBannedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).MarkAsBanned(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_MarkAsBanned_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).MarkAsBanned(ctx, req.(*user.MarkAsBannedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_MarkAsDeleted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(user.MarkAsDeletedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).MarkAsDeleted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_MarkAsDeleted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).MarkAsDeleted(ctx, req.(*user.MarkAsDeletedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "user.model.UserService",
+	ServiceName: "user.service.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -201,6 +273,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _UserService_Update_Handler,
+		},
+		{
+			MethodName: "MarkAsBanned",
+			Handler:    _UserService_MarkAsBanned_Handler,
+		},
+		{
+			MethodName: "MarkAsDeleted",
+			Handler:    _UserService_MarkAsDeleted_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,9 +1,9 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
-import "google/api/common.proto";
+import "model/user/common.proto";
 
-option go_package = "github.com/IIIByte/user-service/model/user";
+option go_package = "github.com/IIIByte/user-service/proto/model/user";
 
 // User - модель пользователя
 message User {
@@ -140,3 +140,4 @@ enum OperationRequestStatus {
   // Операция выполнена успешно
   Success = 2;
 }
+

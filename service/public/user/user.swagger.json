@@ -15,7 +15,259 @@
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/v1/user/create": {
+      "post": {
+        "summary": "Create - Создать нового пользователя",
+        "operationId": "UserService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/list": {
+      "get": {
+        "summary": "GetList - Получить список пользователей",
+        "operationId": "UserService_GetList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userCondition.ids",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "userCondition.logins",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "userCondition.createdAt",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "userCondition.updatedAt",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "listCondition.take",
+            "description": "Взять элементов",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "listCondition.skip",
+            "description": "Пропустить элементов",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "listCondition.directionKey",
+            "description": "Сортировать элементы по ключу",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "listCondition.direction",
+            "description": "Направление сортировки (ASC OR DESC)\n\n - TYPE_ASC: от меньшего к большему\n - TYPE_DESC: от большего к меньшему",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "TYPE_ASC",
+              "TYPE_DESC"
+            ],
+            "default": "TYPE_ASC"
+          },
+          {
+            "name": "listCondition.limit",
+            "description": "Limit \u0026\u0026 Offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "listCondition.offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/update": {
+      "put": {
+        "summary": "Update - Обновить существующего пользователя",
+        "operationId": "UserService_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UpdateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/{userId}/mark/banned": {
+      "post": {
+        "summary": "MarkAsBanned - Пометить как забаненного",
+        "operationId": "UserService_MarkAsBanned",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/MarkAsBannedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserServiceMarkAsBannedBody"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/{userId}/mark/deleted": {
+      "post": {
+        "summary": "MarkAsLocked - Пометить в очередь на удаление",
+        "operationId": "UserService_MarkAsDeleted",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/MarkAsDeletedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserServiceMarkAsDeletedBody"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    }
+  },
   "definitions": {
     "CreateRequest": {
       "type": "object",
@@ -86,6 +338,30 @@
         }
       }
     },
+    "MarkAsBannedResponse": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "operationStatus": {
+          "$ref": "#/definitions/OperationRequestStatus",
+          "title": "Статус операции"
+        }
+      }
+    },
+    "MarkAsDeletedResponse": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "operationStatus": {
+          "$ref": "#/definitions/OperationRequestStatus",
+          "title": "Статус операции"
+        }
+      }
+    },
     "OperationRequestStatus": {
       "type": "string",
       "enum": [
@@ -96,6 +372,15 @@
       "default": "InProgress",
       "description": "- InProgress: Операция в процессе\n - Failed: Операция не прошла, по причине возникновение ошибки\n - Success: Операция выполнена успешно",
       "title": "OperationRequestStatus - статусы операций"
+    },
+    "UpdateRequest": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "title": "UpdateRequest - обновление полей у пользователя"
     },
     "UpdateResponse": {
       "type": "object",
@@ -167,6 +452,14 @@
         }
       },
       "title": "UserCondition - фильтры"
+    },
+    "UserServiceMarkAsBannedBody": {
+      "type": "object",
+      "title": "MarkAsBannedRequest - пометить как заблокированного"
+    },
+    "UserServiceMarkAsDeletedBody": {
+      "type": "object",
+      "title": "MarkAsDeletedRequest - пометить в очередь на удаление из БД"
     },
     "commonListCondition": {
       "type": "object",

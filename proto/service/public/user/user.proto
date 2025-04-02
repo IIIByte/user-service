@@ -2,36 +2,52 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/api.proto";
-//import "third_party/google/api/annotations.proto";
-//import "third_party/google/api/common.proto";
+import "google/api/annotations.proto";
 import "model/user/user.proto";
 
-package user.model;
+
+package user.service;
 
 option go_package = "github.com/IIIByte/user-service/user/public/user";
 
 // Сервис для работы с пользователями
 service UserService {
-
-
   // GetList - Получить список пользователей
   rpc GetList(GetListRequest) returns (GetListResponse) {
-//    option (google.api.http) = {
-//      post: "/v1/robocassa/payment/create",
-//      body: "*"
-//    };
+    option (google.api.http) = {
+      get: "/v1/user/list",
+    };
   };
+  
   // Create - Создать нового пользователя
-  rpc Create(CreateRequest) returns (CreateResponse);
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/create",
+      body: "*"
+    };
+  };
+
   // Update - Обновить существующего пользователя
-  rpc Update(UpdateRequest) returns (UpdateResponse);
+  rpc Update(UpdateRequest) returns (UpdateResponse) {
+    option (google.api.http) = {
+      put: "/v1/user/update",
+      body: "*"
+    };
+  };
 
   // MarkAsBanned - Пометить как забаненного
-  // rpc MarkAsBanned(MarkAsBanned) returns (MarkAsBanned);
+  rpc MarkAsBanned(MarkAsBannedRequest) returns (MarkAsBannedResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/{user_id}/mark/banned",
+      body: "*"
+    };
+  };
 
-  // MarkAsLocked - Пометить как заблокированного
-  // rpc MarkAsLocked(MarkAsLockedRequest) returns (MarkAsLockedResponse);
-
-
-  // TODO: MarkAsDeleted - Пометить в очередь на удаление
+  // MarkAsLocked - Пометить в очередь на удаление
+  rpc MarkAsDeleted(MarkAsDeletedRequest) returns (MarkAsDeletedResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/{user_id}/mark/deleted",
+      body: "*"
+    };
+  };
 }
